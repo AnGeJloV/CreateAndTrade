@@ -27,9 +27,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User createUser (RegistrationRequest request){
+    public User createUser(RegistrationRequest request) {
         // 1. Проверяем, не занят ли email
-        if (userRepository.existsByEmail(request.getEmail())){
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this email already exists");
         }
 
@@ -54,11 +54,18 @@ public class UserService {
     /**
      * Вспомогательный метод для создания корзины для нового пользователя.
      */
-    private void createCartForUser (User user){
-        if (cartRepository.findByUser(user).isEmpty()){
+    private void createCartForUser(User user) {
+        if (cartRepository.findByUser(user).isEmpty()) {
             Cart cart = new Cart();
             cart.setUser(user);
             cartRepository.save(cart);
         }
+    }
+
+    @Transactional
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new
+                        ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 }
