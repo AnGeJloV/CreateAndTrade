@@ -32,6 +32,10 @@ Full-stack marketplace for handmade goods built with Spring Boot and React. This
 
 ### Prerequisites
 
+Before running the project, you need to set the following environment variables:
+- JWT_SECRET: A long, secret string for signing JWT tokens.
+- JWT_EXPIRATION: Token expiration time in milliseconds (e.g., 86400000 for 24 hours).
+
 *(We will list the necessary software here)*
 
 ### Installation & Run
