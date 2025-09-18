@@ -11,9 +11,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    /** Находит пользователя по его email.
-     * Spring Data JPA автоматически сгенерирует SQL-запрос по названию метода. */
-    Optional<User> findMyEmail(String email);
+    Optional<User> findByEmail(String email);
 
     /** Проверяет, существует ли пользователь с таким email.
      * Работает эффективнее, чем findByEmail, так как не загружает всю сущность. */
