@@ -28,7 +28,7 @@ Full-stack marketplace for handmade goods built with Spring Boot and React. This
 
 ## 🚀 Getting Started
 
-*(This section will be filled in later as we write the code)*
+*(This section will be filled in later as write the code)*
 
 ### Prerequisites
 
@@ -47,4 +47,4 @@ Before running the project, you need to set the following environment variables:
 
 ### Installation & Run
 
-*(We will provide step-by-step instructions on how to run the project locally)*
+*(I will give step-by-step instructions on how to run the project locally)*
