@@ -6,6 +6,7 @@ import com.createandtrade.dto.RegistrationRequest;
 import com.createandtrade.dto.UserDto;
 import com.createandtrade.models.User;
 import com.createandtrade.services.UserService;
+import com.createandtrade.security.JwtTokenProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -30,6 +31,7 @@ public class AuthController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * Эндпоинт для регистрации нового пользователя.
@@ -60,8 +62,7 @@ public class AuthController {
         UserDto userDto = modelMapper.map (user, UserDto.class);
 
         // 3. Генерируем JWT-токен
-        //TODO: Заменить на реальную генерацию JWT
-        String token = "dummy-jwt-token-for-" + user.getEmail();
+        String token = jwtTokenProvider.createToken(authentication);
 
         //4. Возвращаем токен и данные пользователя
         return ResponseEntity.ok(new AuthResponse(token, userDto));

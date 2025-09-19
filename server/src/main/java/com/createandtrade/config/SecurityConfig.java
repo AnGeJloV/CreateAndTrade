@@ -1,5 +1,7 @@
 package com.createandtrade.config;
 
+import com.createandtrade.security.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,17 +10,21 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Конфигурационный класс для настроек безопасности.
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     /**
      * Создает и настраивает бин PasswordEncoder.
      * Мы используем BCrypt - надежный и стандартный алгоритм хэширования.
@@ -37,6 +43,7 @@ public class SecurityConfig {
     /**
      * Бин, который управляет процессом аутентификации.
      * Spring Security будет использовать его для проверки логина и пароля.
+     * Вызывает CustomUserDetailsService.
      */
     @Bean
     public AuthenticationManager authenticationManager (AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -47,14 +54,21 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // Отключаем CSRF (Cross-Site Request Forgery) защиту.
-                // Она не нужна для REST API, где аутентификация происходит по токенам.
                 .csrf(AbstractHttpConfigurer::disable)
+
+                // Делаем сессии STATELESS (без состояния).
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 // Настройка правил авторизации запросов
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
-                );
+                )
+
+                // Указываем Spring Security, чтобы он ставил наш jwtAuthenticationFilter
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }
